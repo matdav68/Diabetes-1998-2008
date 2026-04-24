@@ -198,4 +198,4 @@ All charts save to `outputs/` automatically.
 
 ## License
 
-MIT License — see [LICENSE.txt](LICENSE.txt) for details.
+MIT License

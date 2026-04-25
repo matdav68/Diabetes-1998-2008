@@ -78,7 +78,9 @@ Diabetes/
 │   ├── inpatient_readmission.png   # Readmission rate by prior inpatient visits
 │   ├── insulin_readmission.png     # Readmission rate by insulin status
 │   ├── precision_recall.png        # Precision-recall curve
-│   └── roc_curve.png               # ROC curve comparing all models
+│   ├── roc_curve.png               # ROC curve comparing all models
+│   ├── tuning_results.png          # AUC across all 50 hyperparameter candidates
+│   └── tuning_results.csv          # Full cross-validated results for all 50 candidates
 │
 └── deliverables/                   # Final compiled outputs
     ├── Diabetes_Readmission_Report.docx

@@ -3,6 +3,8 @@ from diabetes import load_data
 from features import build_features
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import os
 from sklearn.model_selection import train_test_split, RandomizedSearchCV, StratifiedKFold
 from xgboost import XGBClassifier
 
@@ -76,6 +78,63 @@ print(classification_report(y_test, test_preds,
 
 # ── 7. Save best params for use in model.py ───────────────────────────────────
 import json
-with open('best_params.json', 'w') as f:
+with open('../best_params.json', 'w') as f:
     json.dump(search.best_params_, f, indent=2)
 print("\nBest parameters saved to best_params.json")
+
+OUTPUT_DIR = '../outputs'
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+# ── Save all CV results to CSV ────────────────────────────────────────────────
+cv_results = pd.DataFrame(search.cv_results_)
+
+# Keep only the most useful columns
+cv_results_clean = cv_results[[
+    'param_n_estimators', 'param_max_depth', 'param_learning_rate',
+    'param_subsample', 'param_colsample_bytree', 'param_min_child_weight',
+    'param_gamma', 'param_reg_alpha', 'param_reg_lambda',
+    'mean_test_score', 'std_test_score', 'rank_test_score'
+]].rename(columns={
+    'param_n_estimators':     'n_estimators',
+    'param_max_depth':        'max_depth',
+    'param_learning_rate':    'learning_rate',
+    'param_subsample':        'subsample',
+    'param_colsample_bytree': 'colsample_bytree',
+    'param_min_child_weight': 'min_child_weight',
+    'param_gamma':            'gamma',
+    'param_reg_alpha':        'reg_alpha',
+    'param_reg_lambda':       'reg_lambda',
+    'mean_test_score':        'mean_auc',
+    'std_test_score':         'std_auc',
+    'rank_test_score':        'rank'
+}).sort_values('rank')
+
+cv_results_clean.to_csv(f'{OUTPUT_DIR}/tuning_results.csv', index=False)
+print(f"\nCV results saved to {OUTPUT_DIR}/tuning_results.csv")
+
+# ── Plot AUC distribution across all candidates ───────────────────────────────
+plt.figure(figsize=(10, 5))
+plt.plot(
+    cv_results_clean['rank'],
+    cv_results_clean['mean_auc'],
+    color='steelblue', linewidth=1.5, label='Mean AUC'
+)
+plt.fill_between(
+    cv_results_clean['rank'],
+    cv_results_clean['mean_auc'] - cv_results_clean['std_auc'],
+    cv_results_clean['mean_auc'] + cv_results_clean['std_auc'],
+    alpha=0.2, color='steelblue', label='± 1 std dev'
+)
+plt.axhline(
+    y=search.best_score_,
+    color='coral', linestyle='--', linewidth=1.5,
+    label=f'Best AUC = {search.best_score_:.4f}'
+)
+plt.xlabel('Candidate rank (1 = best)')
+plt.ylabel('Cross-validated AUC')
+plt.title('Hyperparameter Tuning — AUC Across All 50 Candidates')
+plt.legend()
+plt.tight_layout()
+plt.savefig(f'{OUTPUT_DIR}/tuning_results.png', dpi=150)
+plt.show()
+print(f"Chart saved to {OUTPUT_DIR}/tuning_results.png")

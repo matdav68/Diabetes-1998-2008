@@ -6,7 +6,7 @@ import os
 
 df = load_data()
 
-OUTPUT_DIR = 'outputs'
+OUTPUT_DIR = '../outputs'
 os.makedirs(OUTPUT_DIR, exist_ok=True)  # creates the folder if it doesn't exist
 
 # ── Clean up readmitted column ──────────────────────────────────────────────

@@ -17,7 +17,7 @@ from sklearn.metrics import (
 )
 from xgboost import XGBClassifier
 
-OUTPUT_DIR = 'outputs'
+OUTPUT_DIR = '../outputs'
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # ── 1. Load features ─────────────────────────────────────────────────────────

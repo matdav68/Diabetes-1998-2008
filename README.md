@@ -1,4 +1,4 @@
-# Diabetes-1998-2008
+# Diabetes-1999-2008
 # Predicting 30-Day Hospital Readmissions in Diabetic Patients
 
 A machine learning project analyzing clinical and demographic factors that drive 30-day hospital readmissions in diabetic patients, using the UCI Diabetes 130-US Hospitals dataset.
